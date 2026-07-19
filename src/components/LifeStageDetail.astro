@@ -42,6 +42,9 @@ const kickerColor = tone === "terracotta" ? "text-terracotta" : "text-sage-dark"
     to your specific situation.
   </div>
 
+  {/* The CMS body HTML only uses <h3> for its own section headers (no <h2>) — this
+      keeps h1 -> h2 -> h3 sequential for a11y without touching the rich text itself. */}
+  <h2 class="sr-only">Full guide</h2>
   <RichHtml html={entry.body} class="mt-10 text-navy/85" />
 </article>
 

@@ -18,6 +18,7 @@ pnpm-debug.log*
 dev*.log
 lh-*.json
 lh_*.json
+lh-reports/
 
 # environment variables
 .env
