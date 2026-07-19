@@ -2,13 +2,18 @@
 import Layout from "../../layouts/Layout.astro";
 import AccessGuideCard from "../../components/AccessGuideCard.astro";
 import Reveal from "../../components/Reveal.astro";
-import { getAccessGuides } from "../../lib/content";
+import { getAccessGuides, primaryCancerLabel } from "../../lib/content";
 import { buildConfig, fadeUpGroup } from "../../lib/motion";
+import { PATHS } from "../../lib/paths";
+
+const meta = PATHS.find((p) => p.key === "plan")!;
 
 const allGuides = await getAccessGuides();
-const cancerTypes = Array.from(new Set(allGuides.map((g) => g.cancer_type))).sort();
+const cancerTypes = Array.from(new Set(allGuides.map((g) => primaryCancerLabel(g.cancer_type))))
+  .filter((t) => t !== "General")
+  .sort();
 const activeType = Astro.url.searchParams.get("type") || "";
-const guides = activeType ? allGuides.filter((g) => g.cancer_type === activeType) : allGuides;
+const guides = activeType ? allGuides.filter((g) => primaryCancerLabel(g.cancer_type) === activeType) : allGuides;
 
 const keys = guides.map((_, i) => `plan-guide-${i}`);
 const motion = buildConfig(fadeUpGroup(keys));
@@ -30,8 +35,8 @@ const jsonLd = {
 >
   <section class="bg-white py-14 sm:py-20">
     <div class="mx-auto max-w-6xl px-5 sm:px-8">
-      <p class="font-data text-xs uppercase tracking-wide text-sage-dark">Path 2</p>
-      <h1 class="mt-2 font-display text-3xl font-semibold text-navy sm:text-4xl">I need a screening plan.</h1>
+      <p class="font-data text-xs uppercase tracking-wide text-sage-dark">{meta.subbrand}</p>
+      <h1 class="mt-2 font-display text-3xl font-semibold text-navy sm:text-4xl">{meta.tagline}</h1>
       <p class="mt-3 max-w-2xl text-navy/70">
         Getting screened shouldn't require a fight — but sometimes it does. These guides give you
         the exact steps, the exact ask, and what to do if insurance says no.

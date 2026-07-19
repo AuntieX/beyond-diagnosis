@@ -8,6 +8,7 @@ import NewsletterForm from "../components/NewsletterForm.astro";
 import { getArticles, getWarningSigns, getAccessGuides, distinctCancerTypes } from "../lib/content";
 import { buildConfig, fadeUpGroup, heroParallax } from "../lib/motion";
 import { HOMEPAGE_HERO_URL } from "../lib/site-images";
+import { PATHS } from "../lib/paths";
 
 const [articles, warningSigns, accessGuides] = await Promise.all([
   getArticles(),
@@ -17,7 +18,7 @@ const [articles, warningSigns, accessGuides] = await Promise.all([
 const cancerTypes = distinctCancerTypes(warningSigns);
 const latestArticles = articles.slice(0, 3);
 
-const cardKeys = ["path-worried", "path-plan", "path-checkin"];
+const cardKeys = PATHS.map((p) => `path-${p.key}`);
 const statKeys = ["stat-signs", "stat-guides", "stat-types"];
 const articleKeys = latestArticles.map((_, i) => `home-article-${i}`);
 
@@ -94,31 +95,14 @@ const jsonLd = {
         <p class="mt-2 text-navy/70">Pick the door that matches how you're feeling right now.</p>
       </div>
 
-      <div class="mt-8 grid gap-5 sm:grid-cols-3">
-        <Reveal interactKey={cardKeys[0]}>
-          <PathCard
-            href="/paths/worried"
-            title="I'm worried about symptoms"
-            description="Something feels off. Get straight answers on what it could mean and what to do next."
-            icon="worried"
-          />
-        </Reveal>
-        <Reveal interactKey={cardKeys[1]}>
-          <PathCard
-            href="/paths/plan"
-            title="I need a screening plan"
-            description="Find out exactly which screenings you're due for, and the exact script to get them covered."
-            icon="plan"
-          />
-        </Reveal>
-        <Reveal interactKey={cardKeys[2]}>
-          <PathCard
-            href="/paths/checkin"
-            title="I just want to check in"
-            description="A five-minute snapshot of where you stand — no rabbit holes, no doom-scrolling."
-            icon="checkin"
-          />
-        </Reveal>
+      <div class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {
+          PATHS.map((p, i) => (
+            <Reveal interactKey={cardKeys[i]}>
+              <PathCard href={p.href} title={p.subbrand} description={p.plain} icon={p.icon} />
+            </Reveal>
+          ))
+        }
       </div>
     </div>
   </section>

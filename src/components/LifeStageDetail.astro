@@ -1,0 +1,61 @@
+---
+// Shared detail-page body for the four life-stage collections (Therapies, Trials,
+// Environment, Recovery) — mirrors the WarningSign / AccessGuide detail layout so
+// the site feels consistent, even though these collections only carry intro + body.
+import Media from "./Media.astro";
+import RichHtml from "./RichHtml.astro";
+import EntryCard from "./EntryCard.astro";
+import type { LifeStageEntry } from "../lib/content";
+
+interface Props {
+  entry: LifeStageEntry;
+  basePath: string;
+  backHref: string;
+  backLabel: string;
+  tone?: "sage" | "terracotta" | "rose";
+  related: LifeStageEntry[];
+  relatedHeading: string;
+}
+
+const { entry, basePath, backHref, backLabel, tone = "sage", related, relatedHeading } = Astro.props;
+
+const kickerColor = tone === "terracotta" ? "text-terracotta" : "text-sage-dark";
+---
+
+<article class="mx-auto max-w-3xl px-5 py-14 sm:px-8 sm:py-20">
+  <a href={backHref} class="text-sm font-semibold text-terracotta hover:underline">&larr; {backLabel}</a>
+
+  <p class:list={["mt-4 font-data text-xs uppercase tracking-wide", kickerColor]}>{entry.pillar}</p>
+  <h1 class="mt-2 font-display text-3xl font-semibold leading-tight text-navy sm:text-4xl">
+    {entry.title}
+  </h1>
+  {entry.cancer_tags && <p class="mt-2 text-sm text-navy/70">Applies to: {entry.cancer_tags}</p>}
+
+  <div class="mt-8">
+    <Media src={entry.heroImage} alt={entry.title} ratio="16/9" tone={tone} loading="eager" fetchpriority="high" width={1000} height={563} />
+  </div>
+
+  <p class="mt-8 text-lg text-navy/85">{entry.intro}</p>
+
+  <div class="mt-4 rounded-[12px] border border-navy/10 bg-white p-4 text-xs leading-relaxed text-navy/70">
+    This is educational information, not medical advice. Always talk to your care team about what applies
+    to your specific situation.
+  </div>
+
+  <RichHtml html={entry.body} class="mt-10 text-navy/85" />
+</article>
+
+{
+  related.length > 0 && (
+    <section class="border-t border-navy/10 bg-white py-14 sm:py-20">
+      <div class="mx-auto max-w-6xl px-5 sm:px-8">
+        <h2 class="font-display text-2xl font-semibold text-navy">{relatedHeading}</h2>
+        <div class="mt-8 grid gap-5 sm:grid-cols-3">
+          {related.map((e) => (
+            <EntryCard entry={e} basePath={basePath} tone={tone} />
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}

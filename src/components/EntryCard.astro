@@ -1,36 +1,39 @@
 ---
+// Shared card for the four life-stage collections (Therapies, Trials, Environment,
+// Recovery) — same visual language as WarningSignCard / AccessGuideCard.
 import Media from "./Media.astro";
-import type { WarningSign } from "../lib/content";
-import { primaryCancerLabel } from "../lib/content";
+import type { LifeStageEntry } from "../lib/content";
 
 interface Props {
-  sign: WarningSign;
+  entry: LifeStageEntry;
+  basePath: string;
+  tone?: "sage" | "terracotta" | "rose";
   eager?: boolean;
 }
-const { sign, eager = false } = Astro.props;
+const { entry, basePath, tone = "sage", eager = false } = Astro.props;
 ---
 
 <a
-  href={`/warning-signs/${sign.slug}`}
+  href={`${basePath}/${entry.slug}`}
   class="group block overflow-hidden rounded-[12px] bg-white shadow-[var(--shadow-card)] transition-shadow hover:shadow-[var(--shadow-card-hover)]"
 >
   <Media
-    src={sign.heroImage}
-    alt={sign.sign_name}
+    src={entry.heroImage}
+    alt={entry.title}
     ratio="4/3"
-    tone="terracotta"
+    tone={tone}
     width={600}
     height={450}
     loading={eager ? "eager" : "lazy"}
     fetchpriority={eager ? "high" : "auto"}
   />
   <div class="p-5">
-    <span class="font-data text-xs uppercase tracking-wide text-terracotta">{primaryCancerLabel(sign.cancer_type)}</span>
+    <span class="font-data text-xs uppercase tracking-wide text-sage-dark">{entry.pillar}</span>
     <h3 class="mt-1.5 font-display text-lg font-semibold leading-snug text-navy group-hover:text-terracotta">
-      {sign.sign_name}
+      {entry.title}
     </h3>
     <p class="mt-2 text-sm leading-relaxed text-navy/70 line-clamp-2">
-      {sign.title}
+      {entry.intro}
     </p>
   </div>
 </a>

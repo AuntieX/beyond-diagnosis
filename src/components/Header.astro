@@ -1,16 +1,13 @@
 ---
-const currentPath = Astro.url.pathname;
+import { PATHS } from "../lib/paths";
 
-const navLinks = [
-  { href: "/paths/worried", label: "Worried about symptoms" },
-  { href: "/paths/plan", label: "Screening plan" },
-  { href: "/paths/checkin", label: "Just checking in" },
-  { href: "/library", label: "Library" },
-];
+const currentPath = Astro.url.pathname;
 
 function isActive(href: string) {
   return currentPath === href || currentPath.startsWith(href + "/");
 }
+
+const isOnAPath = PATHS.some((p) => isActive(p.href));
 ---
 
 <header class="border-b border-navy/10 bg-cream/95 backdrop-blur-sm sticky top-0 z-40">
@@ -20,19 +17,38 @@ function isActive(href: string) {
     </a>
 
     <nav aria-label="Primary" class="hidden items-center gap-6 md:flex">
-      {
-        navLinks.map((link) => (
-          <a
-            href={link.href}
-            class:list={[
-              "text-sm font-medium transition-colors hover:text-terracotta",
-              isActive(link.href) ? "text-terracotta" : "text-navy/80",
-            ]}
-          >
-            {link.label}
-          </a>
-        ))
-      }
+      <details class="nav-dropdown relative">
+        <summary
+          class:list={[
+            "flex cursor-pointer list-none items-center gap-1 text-sm font-medium transition-colors hover:text-terracotta [&::-webkit-details-marker]:hidden",
+            isOnAPath ? "text-terracotta" : "text-navy/80",
+          ]}
+        >
+          Paths
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="m6 9 6 6 6-6" />
+          </svg>
+        </summary>
+        <div class="absolute left-1/2 top-full z-50 mt-3 w-80 -translate-x-1/2 rounded-[12px] border border-navy/10 bg-white p-2 shadow-[var(--shadow-card-hover)]">
+          {
+            PATHS.map((p) => (
+              <a href={p.href} class="block rounded-md px-3 py-2 transition-colors hover:bg-rose">
+                <span class="block text-sm font-semibold text-navy">{p.subbrand}</span>
+                <span class="block text-xs text-navy/70">{p.plain}</span>
+              </a>
+            ))
+          }
+        </div>
+      </details>
+      <a
+        href="/library"
+        class:list={[
+          "text-sm font-medium transition-colors hover:text-terracotta",
+          isActive("/library") ? "text-terracotta" : "text-navy/80",
+        ]}
+      >
+        Library
+      </a>
     </nav>
 
     <a
@@ -53,13 +69,18 @@ function isActive(href: string) {
         aria-label="Primary mobile"
         class="absolute left-0 right-0 flex flex-col gap-1 border-b border-navy/10 bg-cream px-5 py-4 shadow-lg"
       >
+        <p class="mt-1 px-2 font-data text-xs uppercase tracking-wide text-navy/70">Paths</p>
         {
-          navLinks.map((link) => (
-            <a href={link.href} class="rounded-md px-2 py-2 text-sm font-medium text-navy hover:bg-rose">
-              {link.label}
+          PATHS.map((p) => (
+            <a href={p.href} class="rounded-md px-2 py-2 hover:bg-rose">
+              <span class="block text-sm font-semibold text-navy">{p.subbrand}</span>
+              <span class="block text-xs text-navy/70">{p.plain}</span>
             </a>
           ))
         }
+        <a href="/library" class="mt-2 rounded-md px-2 py-2 text-sm font-medium text-navy hover:bg-rose">
+          Library
+        </a>
         <a href="/newsletter" class="rounded-md px-2 py-2 text-sm font-semibold text-terracotta hover:bg-rose">
           Get the newsletter
         </a>
@@ -67,3 +88,18 @@ function isActive(href: string) {
     </details>
   </div>
 </header>
+
+<script>
+  // Native <details> dropdowns don't close on outside click or link selection —
+  // wire that up without pulling in a JS framework for a single nav widget.
+  document.querySelectorAll<HTMLDetailsElement>(".nav-dropdown").forEach((dropdown) => {
+    dropdown.addEventListener("click", (e) => {
+      const target = e.target as HTMLElement;
+      if (target.closest("a")) dropdown.open = false;
+    });
+    document.addEventListener("click", (e) => {
+      if (!dropdown.open) return;
+      if (!dropdown.contains(e.target as Node)) dropdown.open = false;
+    });
+  });
+</script>

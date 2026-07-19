@@ -1,6 +1,7 @@
 ---
 import Media from "./Media.astro";
 import type { AccessGuide } from "../lib/content";
+import { primaryCancerLabel } from "../lib/content";
 
 interface Props {
   guide: AccessGuide;
@@ -24,7 +25,7 @@ const { guide, eager = false } = Astro.props;
     fetchpriority={eager ? "high" : "auto"}
   />
   <div class="p-5">
-    <span class="font-data text-xs uppercase tracking-wide text-sage-dark">{guide.cancer_type}</span>
+    <span class="font-data text-xs uppercase tracking-wide text-sage-dark">{primaryCancerLabel(guide.cancer_type)}</span>
     <h3 class="mt-1.5 font-display text-lg font-semibold leading-snug text-navy group-hover:text-terracotta">
       {guide.title}
     </h3>

@@ -49,6 +49,21 @@ export interface Article {
   heroImage?: string;
 }
 
+/** Shared shape for the four life-stage collections: Therapies, Trials, Environment, Recovery. */
+export interface LifeStageEntry {
+  _id: string;
+  title: string;
+  slug: string;
+  life_stage: string;
+  pillar: string;
+  cancer_tags: string;
+  intro: string;
+  body: string;
+  heroImage?: string;
+}
+
+export type LifeStageCollectionId = "Therapies" | "Trials" | "Environment" | "Recovery";
+
 /** Resolve a wix:image:// URI (or a plain https URL) to a real, sized image URL. */
 export function imgSrc(value: unknown, w = 1200, h = 800): string {
   if (!value || typeof value !== "string") return "";
@@ -126,9 +141,92 @@ export async function getArticle(slug: string): Promise<Article | null> {
   }, null);
 }
 
-/** Distinct cancer types across warning signs, discovered live (never hardcoded). */
+export async function getLifeStageEntries(collectionId: LifeStageCollectionId): Promise<LifeStageEntry[]> {
+  return safe(async () => {
+    const { items: rows } = await items.query(collectionId).ascending("title").limit(100).find();
+    return rows as unknown as LifeStageEntry[];
+  }, []);
+}
+
+export async function getLifeStageEntry(
+  collectionId: LifeStageCollectionId,
+  slug: string,
+): Promise<LifeStageEntry | null> {
+  return safe(async () => {
+    const { items: rows } = await items.query(collectionId).eq("slug", slug).limit(1).find();
+    return (rows[0] as unknown as LifeStageEntry) ?? null;
+  }, null);
+}
+
+/**
+ * The CMS stores full clinical detail in cancer_type / cancer_tags (e.g. "Skin (Melanoma)",
+ * "Prostate / Bladder / Kidney", "Colon / Colorectal"). Filter pills and card badges show a
+ * normalized *primary* cancer instead, so "Skin (Melanoma)" and "Skin (Basal & Squamous cell)
+ * / Oral / Genital" both collapse to one "Skin" pill. The raw string is still shown in full on
+ * the record's own detail page — nothing is deleted, just normalized for grouping.
+ */
+const CANCER_SYNONYMS: Record<string, string> = {
+  breast: "Breast",
+  colon: "Colorectal",
+  colorectal: "Colorectal",
+  skin: "Skin",
+  melanoma: "Skin",
+  lung: "Lung",
+  prostate: "Prostate",
+  cervical: "Cervical",
+  uterine: "Cervical",
+  endometrial: "Cervical",
+  vaginal: "Cervical",
+  vulvar: "Cervical",
+  ovarian: "Ovarian",
+  pancreatic: "Pancreatic",
+};
+
+function tokenize(raw: string): string[] {
+  return raw
+    .replace(/[()]/g, " ")
+    .split(/[/,&]|\band\b/i)
+    .map((t) => t.trim())
+    .filter(Boolean);
+}
+
+/** The single primary cancer for a record — used for card badges and single-value filter matching. */
+export function primaryCancerLabel(raw?: string): string {
+  if (!raw) return "General";
+  for (const token of tokenize(raw)) {
+    for (const word of token.toLowerCase().split(/\s+/)) {
+      const match = CANCER_SYNONYMS[word.replace(/[^a-z]/g, "")];
+      if (match) return match;
+    }
+  }
+  return "General";
+}
+
+/** Every distinct canonical cancer mentioned — used to match multi-cancer_tags records to filter pills. */
+export function cancerTagsList(raw?: string): string[] {
+  if (!raw) return [];
+  const found = new Set<string>();
+  for (const token of tokenize(raw)) {
+    for (const word of token.toLowerCase().split(/\s+/)) {
+      const match = CANCER_SYNONYMS[word.replace(/[^a-z]/g, "")];
+      if (match) found.add(match);
+    }
+  }
+  return Array.from(found);
+}
+
+/** Distinct normalized primary cancers across warning signs, discovered live (never hardcoded). */
 export function distinctCancerTypes(signs: WarningSign[]): string[] {
-  return Array.from(new Set(signs.map((s) => s.cancer_type))).sort();
+  return Array.from(new Set(signs.map((s) => primaryCancerLabel(s.cancer_type)))).filter((t) => t !== "General").sort();
+}
+
+/** Distinct normalized cancers across cancer_tags-based entries (Therapies/Trials/Environment/Recovery). */
+export function distinctCancerTags(entries: LifeStageEntry[]): string[] {
+  const found = new Set<string>();
+  for (const e of entries) {
+    for (const tag of cancerTagsList(e.cancer_tags)) found.add(tag);
+  }
+  return Array.from(found).sort();
 }
 
 export function formatDate(value?: string): string {

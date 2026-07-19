@@ -1,0 +1,42 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import LifeStageDetail from "../../components/LifeStageDetail.astro";
+import { getLifeStageEntry, getLifeStageEntries, imgSrc } from "../../lib/content";
+
+export const prerender = false;
+
+const { slug } = Astro.params;
+const entry = slug ? await getLifeStageEntry("Environment", slug) : null;
+
+if (!entry) {
+  return new Response(null, { status: 404 });
+}
+
+const related = (await getLifeStageEntries("Environment")).filter((e) => e._id !== entry._id).slice(0, 3);
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "MedicalWebPage",
+  name: entry.title,
+  url: new URL(`/environment/${entry.slug}`, Astro.site ?? Astro.url.origin),
+  disclaimer: "Not medical advice. Always consult your care team.",
+};
+---
+
+<Layout
+  title={entry.title}
+  description={entry.intro.slice(0, 155)}
+  image={imgSrc(entry.heroImage, 1200, 630) || undefined}
+  jsonLd={jsonLd}
+  canonicalPath={`/environment/${entry.slug}`}
+>
+  <LifeStageDetail
+    entry={entry}
+    basePath="/environment"
+    backHref="/paths/risk"
+    backLabel="Back to Ground Rules"
+    tone="sage"
+    related={related}
+    relatedHeading="More ways to lower your risk"
+  />
+</Layout>
