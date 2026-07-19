@@ -1,0 +1,65 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "AboutPage",
+  name: "About Beyond Diagnosis",
+  url: new URL("/about", Astro.site ?? Astro.url.origin),
+};
+---
+
+<Layout
+  title="About"
+  description="Beyond Diagnosis is an independent editorial project bringing clear, evidence-grounded cancer education to people 35 and up."
+  jsonLd={jsonLd}
+>
+  <section class="mx-auto max-w-3xl px-5 py-14 sm:px-8 sm:py-20">
+    <p class="font-data text-xs uppercase tracking-wide text-sage-dark">Our mission</p>
+    <h1 class="mt-2 font-display text-3xl font-semibold text-navy sm:text-4xl">
+      An independent editorial project — nothing to sell you.
+    </h1>
+
+    <div class="prose-editorial mt-8 text-navy/80">
+      <p>
+        Listen. Most of what exists online about cancer risk is written to be found by search
+        engines, not to actually help you. It's vague where it should be specific, and reassuring
+        where it should be direct. Beyond Diagnosis exists to be the opposite of that.
+      </p>
+      <p>
+        We built this as an <strong>independent editorial project</strong> — not a hospital
+        system, not a pharma-funded initiative, not a store. There is nothing here to buy. Our
+        only job is to give people 35 and up the specific, evidence-grounded information they need
+        to catch problems early and advocate for themselves when a doctor moves too slowly.
+      </p>
+      <h2>Why 35+</h2>
+      <p>
+        Cancer risk rises with age, but it doesn't wait politely for milestone birthdays — and
+        rates of several cancers are climbing in adults under 50. We write for the specific,
+        unglamorous reality of being in your late 30s, 40s, 50s, and beyond: juggling caregiving,
+        careers, and a body that's starting to send you messages you can't afford to misread.
+      </p>
+      <h2>How we write</h2>
+      <p>
+        Every warning sign, every access guide, every article follows the same voice: direct,
+        fiercely on your side, and specific enough to act on. When we say "the exact ask," we mean
+        it — we want you walking into an appointment with the exact sentence that gets you taken
+        seriously.
+      </p>
+      <h2>What this is not</h2>
+      <p>
+        This is not medical advice, and it is not a diagnosis. It's the information and the
+        confidence to have a better conversation with a licensed clinician — every single time.
+      </p>
+    </div>
+
+    <div class="mt-10 rounded-[12px] border border-navy/10 bg-white p-6">
+      <p class="font-display text-lg font-semibold text-navy">Not medical advice.</p>
+      <p class="mt-2 text-sm leading-relaxed text-navy/70">
+        Beyond Diagnosis is an independent editorial project. Nothing on this site replaces the
+        judgment of a licensed clinician who knows your history. Always consult a doctor about
+        your specific symptoms and risk factors.
+      </p>
+    </div>
+  </section>
+</Layout>

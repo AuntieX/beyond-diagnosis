@@ -1,0 +1,80 @@
+---
+// Renders a resolved Wix image, or a deterministic, on-brand themed-block
+// fallback when no heroImage was seeded/generated yet — never an empty or
+// broken <img>. See DISCOVERY.md / SEED.md "themed-block fallback".
+import { imgSrc } from "../lib/content";
+
+interface Props {
+  src?: string;
+  alt: string;
+  ratio?: "16/9" | "1/1" | "4/3";
+  class?: string;
+  loading?: "lazy" | "eager";
+  fetchpriority?: "high" | "low" | "auto";
+  width?: number;
+  height?: number;
+  tone?: "sage" | "terracotta" | "rose";
+}
+
+const {
+  src,
+  alt,
+  ratio = "16/9",
+  class: className = "",
+  loading = "lazy",
+  fetchpriority = "auto",
+  width = 1200,
+  height = 800,
+  tone = "sage",
+} = Astro.props;
+
+const resolved = imgSrc(src, width, height);
+
+const ratioClass = { "16/9": "aspect-[16/9]", "1/1": "aspect-square", "4/3": "aspect-[4/3]" }[ratio];
+const toneClass = {
+  sage: "from-sage/40 via-rose/60 to-cream",
+  terracotta: "from-terracotta/35 via-rose/70 to-cream",
+  rose: "from-rose to-cream",
+}[tone];
+---
+
+{
+  resolved ? (
+    <img
+      src={resolved}
+      alt={alt}
+      loading={loading}
+      fetchpriority={fetchpriority}
+      decoding="async"
+      width={width}
+      height={height}
+      class:list={["w-full rounded-[12px] object-cover", ratioClass, className]}
+    />
+  ) : (
+    <div
+      role="img"
+      aria-label={alt}
+      class:list={[
+        "w-full rounded-[12px] bg-gradient-to-br flex items-center justify-center",
+        ratioClass,
+        toneClass,
+        className,
+      ]}
+    >
+      <svg
+        width="40"
+        height="40"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5"
+        class="text-navy/25"
+        aria-hidden="true"
+      >
+        <path d="M4 5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5Z" />
+        <circle cx="9" cy="10" r="1.5" />
+        <path d="m5 17 4-4 3 3 4-5 3 3" />
+      </svg>
+    </div>
+  )
+}

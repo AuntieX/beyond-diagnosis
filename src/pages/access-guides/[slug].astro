@@ -1,0 +1,91 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Media from "../../components/Media.astro";
+import RichHtml from "../../components/RichHtml.astro";
+import AccessGuideCard from "../../components/AccessGuideCard.astro";
+import { getAccessGuide, getAccessGuides, formatDate, imgSrc } from "../../lib/content";
+
+export const prerender = false;
+
+const { slug } = Astro.params;
+const guide = slug ? await getAccessGuide(slug) : null;
+
+if (!guide) {
+  return new Response(null, { status: 404 });
+}
+
+const related = (await getAccessGuides()).filter((g) => g._id !== guide._id).slice(0, 3);
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  name: guide.title,
+  about: guide.cancer_type,
+  url: new URL(`/access-guides/${guide.slug}`, Astro.site ?? Astro.url.origin),
+};
+---
+
+<Layout
+  title={guide.title}
+  description={guide.overview.replace(/<[^>]+>/g, "").slice(0, 155)}
+  image={imgSrc(guide.heroImage, 1200, 630) || undefined}
+  jsonLd={jsonLd}
+  canonicalPath={`/access-guides/${guide.slug}`}
+>
+  <article class="mx-auto max-w-3xl px-5 py-14 sm:px-8 sm:py-20">
+    <a href="/paths/plan" class="text-sm font-semibold text-terracotta hover:underline">&larr; Back to access guides</a>
+
+    <p class="mt-4 font-data text-xs uppercase tracking-wide text-sage-dark">{guide.cancer_type}</p>
+    <h1 class="mt-2 font-display text-3xl font-semibold leading-tight text-navy sm:text-4xl">
+      {guide.title}
+    </h1>
+    {guide.last_reviewed && <p class="mt-2 text-xs text-navy/50">Last reviewed {formatDate(guide.last_reviewed)}</p>}
+
+    <div class="mt-8">
+      <Media src={guide.heroImage} alt={guide.title} ratio="16/9" tone="sage" loading="eager" fetchpriority="high" />
+    </div>
+
+    <RichHtml html={guide.overview} class="mt-8 text-lg text-navy/85" />
+
+    <section class="mt-10">
+      <h2 class="font-display text-xl font-semibold text-navy">The steps</h2>
+      <RichHtml html={guide.steps} class="mt-3 text-navy/80" />
+    </section>
+
+    <div class="mt-8 grid gap-5 sm:grid-cols-2">
+      <div class="rounded-[12px] bg-white p-5 shadow-[var(--shadow-card)]">
+        <h3 class="font-display text-base font-semibold text-sage-dark">This applies when</h3>
+        <RichHtml html={guide.when_applies} class="mt-2 text-sm text-navy/75" />
+      </div>
+      <div class="rounded-[12px] bg-white p-5 shadow-[var(--shadow-card)]">
+        <h3 class="font-display text-base font-semibold text-navy/60">This doesn't apply when</h3>
+        <RichHtml html={guide.when_not} class="mt-2 text-sm text-navy/75" />
+      </div>
+    </div>
+
+    <section class="mt-8">
+      <h2 class="font-display text-xl font-semibold text-navy">Resources</h2>
+      <RichHtml html={guide.resources} class="mt-3 text-navy/80" />
+    </section>
+
+    <section class="mt-8 rounded-[12px] bg-rose p-6">
+      <h2 class="font-display text-xl font-semibold text-navy">If you're denied</h2>
+      <RichHtml html={guide.denial_path} class="mt-3 text-navy/80" />
+    </section>
+  </article>
+
+  {
+    related.length > 0 && (
+      <section class="border-t border-navy/10 bg-white py-14 sm:py-20">
+        <div class="mx-auto max-w-6xl px-5 sm:px-8">
+          <h2 class="font-display text-2xl font-semibold text-navy">More access guides</h2>
+          <div class="mt-8 grid gap-5 sm:grid-cols-3">
+            {related.map((g) => (
+              <AccessGuideCard guide={g} />
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+</Layout>

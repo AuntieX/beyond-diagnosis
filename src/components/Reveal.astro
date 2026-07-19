@@ -1,0 +1,16 @@
+---
+// Wraps content in the @wix/interact custom element so it can be targeted by
+// key from a page-level motion config (see src/lib/motion.ts). Falls back to
+// plain, always-visible content if JS never runs (progressive enhancement).
+interface Props {
+  interactKey: string;
+  class?: string;
+}
+const { interactKey, class: className } = Astro.props;
+---
+
+<interact-element data-interact-key={interactKey}>
+  <div class={className}>
+    <slot />
+  </div>
+</interact-element>

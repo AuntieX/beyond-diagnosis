@@ -1,0 +1,75 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Media from "../../components/Media.astro";
+import RichHtml from "../../components/RichHtml.astro";
+import ArticleCard from "../../components/ArticleCard.astro";
+import { getArticle, getArticles, formatDate, imgSrc } from "../../lib/content";
+
+export const prerender = false;
+
+const { slug } = Astro.params;
+const article = slug ? await getArticle(slug) : null;
+
+if (!article) {
+  return new Response(null, { status: 404 });
+}
+
+const allArticles = await getArticles();
+const related = allArticles.filter((a) => a._id !== article._id).slice(0, 3);
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: article.title,
+  description: article.excerpt,
+  author: { "@type": "Organization", name: article.author },
+  datePublished: article.publishDate,
+  image: imgSrc(article.heroImage, 1200, 675) || undefined,
+  mainEntityOfPage: new URL(`/library/${article.slug}`, Astro.site ?? Astro.url.origin),
+};
+---
+
+<Layout
+  title={article.title}
+  description={article.excerpt}
+  image={imgSrc(article.heroImage, 1200, 630) || undefined}
+  jsonLd={jsonLd}
+  canonicalPath={`/library/${article.slug}`}
+>
+  <article class="mx-auto max-w-3xl px-5 py-14 sm:px-8 sm:py-20">
+    <div class="flex items-center gap-2 font-data text-xs uppercase tracking-wide text-sage-dark">
+      <span>{article.category}</span>
+      <span aria-hidden="true">&middot;</span>
+      <span>{article.readMinutes} min read</span>
+    </div>
+    <h1 class="mt-2 font-display text-3xl font-semibold leading-tight text-navy sm:text-4xl">
+      {article.title}
+    </h1>
+    <div class="mt-4 flex items-center gap-2 text-sm text-navy/60">
+      <span>By {article.author}</span>
+      <span aria-hidden="true">&middot;</span>
+      <span>{formatDate(article.publishDate)}</span>
+    </div>
+
+    <div class="mt-8">
+      <Media src={article.heroImage} alt={article.title} ratio="16/9" tone="rose" loading="eager" fetchpriority="high" />
+    </div>
+
+    <RichHtml html={article.body} class="mt-10 text-navy/85" />
+  </article>
+
+  {
+    related.length > 0 && (
+      <section class="border-t border-navy/10 bg-white py-14 sm:py-20">
+        <div class="mx-auto max-w-6xl px-5 sm:px-8">
+          <h2 class="font-display text-2xl font-semibold text-navy">More from the library</h2>
+          <div class="mt-8 grid gap-5 sm:grid-cols-3">
+            {related.map((a) => (
+              <ArticleCard article={a} />
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+</Layout>

@@ -1,0 +1,54 @@
+---
+import Layout from "../layouts/Layout.astro";
+import NewsletterForm from "../components/NewsletterForm.astro";
+import ArticleCard from "../components/ArticleCard.astro";
+import { getArticles } from "../lib/content";
+
+const articles = await getArticles();
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  name: "Newsletter — Beyond Diagnosis",
+  url: new URL("/newsletter", Astro.site ?? Astro.url.origin),
+};
+---
+
+<Layout
+  title="Newsletter"
+  description="One email a week. No fear, no fluff. Sign up for straight cancer-education guidance from Beyond Diagnosis."
+  jsonLd={jsonLd}
+>
+  <section class="bg-white py-14 sm:py-20">
+    <div class="mx-auto max-w-2xl px-5 text-center sm:px-8">
+      <p class="font-data text-xs uppercase tracking-wide text-sage-dark">The newsletter</p>
+      <h1 class="mt-2 font-display text-3xl font-semibold text-navy sm:text-4xl">
+        One email a week. No fear, no fluff.
+      </h1>
+      <p class="mt-4 text-navy/70">
+        Every week: one warning sign explained plainly, one access script you can use verbatim, or
+        one story that makes the abstract concrete. That's it. No alarmism, no filler, no selling
+        you anything.
+      </p>
+      <div class="mt-8">
+        <NewsletterForm />
+      </div>
+    </div>
+  </section>
+
+  {
+    articles.length > 0 && (
+      <section class="bg-cream py-14 sm:py-20">
+        <div class="mx-auto max-w-6xl px-5 sm:px-8">
+          <h2 class="font-display text-2xl font-semibold text-navy sm:text-3xl">From the archive</h2>
+          <p class="mt-2 max-w-xl text-navy/70">A sample of what's already in the library, while you wait for your first email.</p>
+          <div class="mt-8 grid gap-5 sm:grid-cols-3">
+            {articles.map((article) => (
+              <ArticleCard article={article} />
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+</Layout>

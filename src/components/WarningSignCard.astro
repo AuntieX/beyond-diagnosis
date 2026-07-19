@@ -1,0 +1,25 @@
+---
+import Media from "./Media.astro";
+import type { WarningSign } from "../lib/content";
+
+interface Props {
+  sign: WarningSign;
+}
+const { sign } = Astro.props;
+---
+
+<a
+  href={`/warning-signs/${sign.slug}`}
+  class="group block overflow-hidden rounded-[12px] bg-white shadow-[var(--shadow-card)] transition-shadow hover:shadow-[var(--shadow-card-hover)]"
+>
+  <Media src={sign.heroImage} alt={sign.sign_name} ratio="4/3" tone="terracotta" />
+  <div class="p-5">
+    <span class="font-data text-xs uppercase tracking-wide text-terracotta">{sign.cancer_type}</span>
+    <h3 class="mt-1.5 font-display text-lg font-semibold leading-snug text-navy group-hover:text-terracotta">
+      {sign.sign_name}
+    </h3>
+    <p class="mt-2 text-sm leading-relaxed text-navy/70 line-clamp-2">
+      {sign.title}
+    </p>
+  </div>
+</a>

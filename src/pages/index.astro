@@ -1,0 +1,182 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Media from "../components/Media.astro";
+import PathCard from "../components/PathCard.astro";
+import ArticleCard from "../components/ArticleCard.astro";
+import Reveal from "../components/Reveal.astro";
+import NewsletterForm from "../components/NewsletterForm.astro";
+import { getArticles, getWarningSigns, getAccessGuides, distinctCancerTypes } from "../lib/content";
+import { buildConfig, fadeUpGroup, heroParallax } from "../lib/motion";
+import { HOMEPAGE_HERO_URL } from "../lib/site-images";
+
+const [articles, warningSigns, accessGuides] = await Promise.all([
+  getArticles(),
+  getWarningSigns(),
+  getAccessGuides(),
+]);
+const cancerTypes = distinctCancerTypes(warningSigns);
+const latestArticles = articles.slice(0, 3);
+
+const cardKeys = ["path-worried", "path-plan", "path-checkin"];
+const statKeys = ["stat-signs", "stat-guides", "stat-types"];
+const articleKeys = latestArticles.map((_, i) => `home-article-${i}`);
+
+const motion = buildConfig([
+  heroParallax("home-hero-image"),
+  ...fadeUpGroup(cardKeys),
+  ...fadeUpGroup(statKeys),
+  ...fadeUpGroup(articleKeys),
+]);
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "Beyond Diagnosis",
+  description:
+    "Editorial cancer education for people 35 and up: screening schedules, warning signs, and clear guidance grounded in evidence.",
+  url: Astro.site ?? Astro.url.origin,
+};
+---
+
+<Layout
+  title="Beyond Diagnosis"
+  description="Screening schedules, warning signs, and clear guidance grounded in evidence, written for humans. Independent cancer education for people 35+."
+  motion={motion}
+  jsonLd={jsonLd}
+>
+  <section class="relative overflow-hidden bg-cream">
+    <div class="mx-auto grid max-w-6xl gap-10 px-5 py-14 sm:px-8 sm:py-20 lg:grid-cols-[1.1fr_1fr] lg:items-center lg:py-24">
+      <div>
+        <h1 class="font-display text-4xl font-semibold leading-[1.08] text-navy sm:text-5xl lg:text-[3.4rem]">
+          Knowledge changes what happens next.
+        </h1>
+        <p class="mt-5 max-w-lg text-lg leading-relaxed text-navy/75">
+          Screening schedules, warning signs, and clear guidance grounded in evidence, written for
+          humans.
+        </p>
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a
+            href="/paths/plan"
+            class="rounded-full bg-terracotta px-6 py-3.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-terracotta-dark"
+          >
+            Get my screening schedule
+          </a>
+          <a
+            href="/paths/worried"
+            class="rounded-full border border-navy/20 bg-white px-6 py-3.5 text-sm font-semibold text-navy transition-colors hover:border-navy/40"
+          >
+            Find warning signs
+          </a>
+        </div>
+      </div>
+
+      <interact-element data-interact-key="home-hero-image" class="block">
+        <div>
+          <Media
+            src={HOMEPAGE_HERO_URL}
+            alt="A woman in her 40s reading calmly by a sunlit window"
+            ratio="4/3"
+            tone="rose"
+            loading="eager"
+            fetchpriority="high"
+            width={900}
+            height={675}
+          />
+        </div>
+      </interact-element>
+    </div>
+  </section>
+
+  <section class="bg-white py-14 sm:py-20">
+    <div class="mx-auto max-w-6xl px-5 sm:px-8">
+      <div class="max-w-xl">
+        <h2 class="font-display text-2xl font-semibold text-navy sm:text-3xl">Where do you want to start?</h2>
+        <p class="mt-2 text-navy/70">Pick the door that matches how you're feeling right now.</p>
+      </div>
+
+      <div class="mt-8 grid gap-5 sm:grid-cols-3">
+        <Reveal interactKey={cardKeys[0]}>
+          <PathCard
+            href="/paths/worried"
+            title="I'm worried about symptoms"
+            description="Something feels off. Get straight answers on what it could mean and what to do next."
+            icon="worried"
+          />
+        </Reveal>
+        <Reveal interactKey={cardKeys[1]}>
+          <PathCard
+            href="/paths/plan"
+            title="I need a screening plan"
+            description="Find out exactly which screenings you're due for, and the exact script to get them covered."
+            icon="plan"
+          />
+        </Reveal>
+        <Reveal interactKey={cardKeys[2]}>
+          <PathCard
+            href="/paths/checkin"
+            title="I just want to check in"
+            description="A five-minute snapshot of where you stand — no rabbit holes, no doom-scrolling."
+            icon="checkin"
+          />
+        </Reveal>
+      </div>
+    </div>
+  </section>
+
+  <section class="bg-navy py-14 text-cream sm:py-16">
+    <div class="mx-auto max-w-6xl px-5 sm:px-8">
+      <div class="grid gap-8 sm:grid-cols-3">
+        <Reveal interactKey={statKeys[0]} class="text-center sm:text-left">
+          <p class="font-display text-4xl font-semibold text-rose">
+            <span data-count-target={warningSigns.length}>0</span>+
+          </p>
+          <p class="mt-1 text-sm text-cream/70">Warning signs mapped to what they could mean</p>
+        </Reveal>
+        <Reveal interactKey={statKeys[1]} class="text-center sm:text-left">
+          <p class="font-display text-4xl font-semibold text-rose">
+            <span data-count-target={accessGuides.length}>0</span>+
+          </p>
+          <p class="mt-1 text-sm text-cream/70">Access guides with the exact script to use</p>
+        </Reveal>
+        <Reveal interactKey={statKeys[2]} class="text-center sm:text-left">
+          <p class="font-display text-4xl font-semibold text-rose">
+            <span data-count-target={cancerTypes.length}>0</span>+
+          </p>
+          <p class="mt-1 text-sm text-cream/70">Cancer types covered, and growing every month</p>
+        </Reveal>
+      </div>
+    </div>
+  </section>
+
+  {
+    latestArticles.length > 0 && (
+      <section class="bg-cream py-14 sm:py-20">
+        <div class="mx-auto max-w-6xl px-5 sm:px-8">
+          <div class="flex flex-wrap items-baseline justify-between gap-3">
+            <h2 class="font-display text-2xl font-semibold text-navy sm:text-3xl">From the library</h2>
+            <a href="/library" class="text-sm font-semibold text-terracotta hover:underline">
+              See all articles &rarr;
+            </a>
+          </div>
+          <div class="mt-8 grid gap-5 sm:grid-cols-3">
+            {latestArticles.map((article, i) => (
+              <Reveal interactKey={articleKeys[i]}>
+                <ArticleCard article={article} />
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <section class="bg-rose py-14 sm:py-16">
+    <div class="mx-auto max-w-3xl px-5 text-center sm:px-8">
+      <h2 class="font-display text-2xl font-semibold text-navy sm:text-3xl">One email a week. No fear, no fluff.</h2>
+      <p class="mt-2 text-navy/70">Straight guidance for people 35+, delivered on a schedule you can trust.</p>
+      <div class="mt-6">
+        <NewsletterForm variant="inline" />
+      </div>
+    </div>
+  </section>
+</Layout>

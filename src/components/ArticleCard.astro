@@ -1,0 +1,28 @@
+---
+import Media from "./Media.astro";
+import { formatDate, type Article } from "../lib/content";
+
+interface Props {
+  article: Article;
+}
+const { article } = Astro.props;
+---
+
+<a
+  href={`/library/${article.slug}`}
+  class="group block overflow-hidden rounded-[12px] bg-white shadow-[var(--shadow-card)] transition-shadow hover:shadow-[var(--shadow-card-hover)]"
+>
+  <Media src={article.heroImage} alt={article.title} ratio="16/9" tone="rose" />
+  <div class="p-5">
+    <div class="flex items-center gap-2 font-data text-xs uppercase tracking-wide text-sage-dark">
+      <span>{article.category}</span>
+      <span aria-hidden="true">&middot;</span>
+      <span>{article.readMinutes} min read</span>
+    </div>
+    <h3 class="mt-1.5 font-display text-lg font-semibold leading-snug text-navy group-hover:text-terracotta">
+      {article.title}
+    </h3>
+    <p class="mt-2 text-sm leading-relaxed text-navy/70 line-clamp-2">{article.excerpt}</p>
+    <p class="mt-3 text-xs text-navy/50">{formatDate(article.publishDate)}</p>
+  </div>
+</a>

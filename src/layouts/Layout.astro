@@ -1,0 +1,142 @@
+---
+import "../styles/global.css";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import { generate } from "../lib/motion";
+
+interface Props {
+  title: string;
+  description: string;
+  image?: string;
+  motion?: { interactions: Record<string, unknown>[] };
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+  canonicalPath?: string;
+}
+
+const {
+  title,
+  description,
+  image,
+  motion,
+  jsonLd,
+  canonicalPath = Astro.url.pathname,
+} = Astro.props;
+
+const siteName = "Beyond Diagnosis";
+const fullTitle = title === siteName ? title : `${title} | ${siteName}`;
+const siteUrl = Astro.site ?? new URL(Astro.url.origin);
+const canonicalUrl = new URL(canonicalPath, siteUrl);
+const ogImage = image ?? "/og-default.jpg";
+
+const motionCss = motion && motion.interactions.length > 0 ? generate(motion as never, true) : "";
+const jsonLdArray = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={siteName} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={new URL(ogImage, siteUrl)} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={new URL(ogImage, siteUrl)} />
+
+    <meta name="theme-color" content="#faf5ee" />
+
+    {
+      jsonLdArray.map((entry) => (
+        <script type="application/ld+json" set:html={JSON.stringify(entry)} />
+      ))
+    }
+
+    {motionCss && <style set:html={motionCss} />}
+  </head>
+  <body class="bg-cream text-navy font-body antialiased">
+    <a
+      href="#main-content"
+      class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-navy focus:px-4 focus:py-2 focus:text-white"
+    >
+      Skip to content
+    </a>
+    <Header />
+    <main id="main-content">
+      <slot />
+    </main>
+    <Footer />
+
+    {
+      motion && motion.interactions.length > 0 && (
+        <script
+          type="application/json"
+          id="motion-config"
+          set:html={JSON.stringify(motion)}
+        />
+      )
+    }
+    <script>
+      // Deferred module: wires up @wix/interact from the page-embedded config.
+      // No-ops gracefully if there is no config on the page.
+      import { Interact } from "@wix/interact/web";
+      import * as presets from "@wix/motion-presets";
+
+      Interact.registerEffects(presets);
+
+      const configEl = document.getElementById("motion-config");
+      if (configEl?.textContent) {
+        try {
+          const config = JSON.parse(configEl.textContent);
+          if (config?.interactions?.length) {
+            Interact.create(config);
+          }
+        } catch (err) {
+          console.error("[motion] failed to parse config", err);
+        }
+      }
+
+      // Lightweight, dependency-free count-up for [data-count-target] elements.
+      const counters = document.querySelectorAll<HTMLElement>("[data-count-target]");
+      if (counters.length && "IntersectionObserver" in window) {
+        const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        const observer = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (!entry.isIntersecting) continue;
+              const el = entry.target as HTMLElement;
+              const target = Number(el.dataset.countTarget ?? "0");
+              observer.unobserve(el);
+              if (prefersReducedMotion || !target) {
+                el.textContent = String(target);
+                continue;
+              }
+              const duration = 1100;
+              const start = performance.now();
+              const tick = (now: number) => {
+                const progress = Math.min(1, (now - start) / duration);
+                const eased = 1 - Math.pow(1 - progress, 3);
+                el.textContent = String(Math.round(eased * target));
+                if (progress < 1) requestAnimationFrame(tick);
+              };
+              requestAnimationFrame(tick);
+            }
+          },
+          { threshold: 0.5 },
+        );
+        counters.forEach((el) => observer.observe(el));
+      }
+    </script>
+  </body>
+</html>

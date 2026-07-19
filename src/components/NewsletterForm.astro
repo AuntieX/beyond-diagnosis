@@ -1,0 +1,116 @@
+---
+import { forms } from "@wix/forms";
+import { NEWSLETTER_FORM_ID } from "../lib/content";
+
+interface Props {
+  variant?: "inline" | "panel";
+}
+const { variant = "panel" } = Astro.props;
+
+type FormField = {
+  target: string;
+  label: string;
+  placeholder?: string;
+  required?: boolean;
+  format?: string;
+};
+
+let fields: FormField[] = [
+  { target: "email", label: "Email", placeholder: "you@example.com", required: true, format: "EMAIL" },
+];
+
+try {
+  const form = await forms.getForm(NEWSLETTER_FORM_ID);
+  const raw = (form as unknown as { fields?: Array<Record<string, unknown>> }).fields ?? [];
+  const projected = raw
+    .filter((f) => f.target && !f.hidden)
+    .map((f) => ({
+      target: String(f.target),
+      label: String((f as { view?: { label?: string } }).view?.label ?? f.target),
+      placeholder: (f as { view?: { placeholder?: string } }).view?.placeholder ?? "",
+      required: Boolean((f as { validation?: { required?: boolean } }).validation?.required),
+      format: (f as { validation?: { string?: { format?: string } } }).validation?.string?.format,
+    }));
+  if (projected.length) fields = projected;
+} catch (err) {
+  console.error("[newsletter-form] schema fetch failed, using fallback field", err);
+}
+
+const isPanel = variant === "panel";
+---
+
+<div class:list={["newsletter-form", isPanel && "rounded-[12px] bg-rose p-6 sm:p-8"]}>
+  <form data-newsletter-form class="flex flex-col gap-3 sm:flex-row sm:items-start">
+    {
+      fields.map((field) => (
+        <div class="flex-1">
+          <label class="sr-only" for={`nl-${field.target}`}>
+            {field.label}
+          </label>
+          <input
+            id={`nl-${field.target}`}
+            name={field.target}
+            type={field.format === "EMAIL" ? "email" : "text"}
+            required={field.required}
+            placeholder={field.placeholder || field.label}
+            class="w-full rounded-full border border-navy/15 bg-white px-4 py-3 text-sm text-navy placeholder:text-navy/40 focus:border-terracotta focus:outline-none focus:ring-2 focus:ring-terracotta/30"
+          />
+        </div>
+      ))
+    }
+    <button
+      type="submit"
+      class="shrink-0 rounded-full bg-terracotta px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-terracotta-dark disabled:opacity-60"
+    >
+      Send it to me
+    </button>
+  </form>
+  <p data-newsletter-message role="status" class="mt-3 text-sm"></p>
+</div>
+
+<script>
+  const forms = document.querySelectorAll<HTMLFormElement>("[data-newsletter-form]");
+
+  forms.forEach((form) => {
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const messageEl = form.parentElement?.querySelector<HTMLElement>("[data-newsletter-message]");
+      const button = form.querySelector<HTMLButtonElement>("button[type=submit]");
+      const data = Object.fromEntries(new FormData(form).entries());
+
+      if (button) button.disabled = true;
+      if (messageEl) {
+        messageEl.textContent = "Sending...";
+        messageEl.className = "mt-3 text-sm text-navy/60";
+      }
+
+      try {
+        const res = await fetch("/api/newsletter", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+        const json = await res.json();
+        if (res.ok && json.ok) {
+          form.reset();
+          if (messageEl) {
+            messageEl.textContent = "You're in. Watch your inbox — one email a week, no fear, no fluff.";
+            messageEl.className = "mt-3 text-sm font-medium text-sage-dark";
+          }
+        } else {
+          if (messageEl) {
+            messageEl.textContent = json.error || "Something went wrong. Please try again.";
+            messageEl.className = "mt-3 text-sm font-medium text-terracotta-dark";
+          }
+        }
+      } catch {
+        if (messageEl) {
+          messageEl.textContent = "Something went wrong. Please try again.";
+          messageEl.className = "mt-3 text-sm font-medium text-terracotta-dark";
+        }
+      } finally {
+        if (button) button.disabled = false;
+      }
+    });
+  });
+</script>

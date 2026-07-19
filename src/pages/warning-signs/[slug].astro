@@ -1,0 +1,105 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Media from "../../components/Media.astro";
+import RichHtml from "../../components/RichHtml.astro";
+import WarningSignCard from "../../components/WarningSignCard.astro";
+import { getWarningSign, getWarningSignsByCancerType, imgSrc } from "../../lib/content";
+
+export const prerender = false;
+
+const { slug } = Astro.params;
+const sign = slug ? await getWarningSign(slug) : null;
+
+if (!sign) {
+  return new Response(null, { status: 404 });
+}
+
+const related = (await getWarningSignsByCancerType(sign.cancer_type)).filter((s) => s._id !== sign._id).slice(0, 3);
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "MedicalWebPage",
+  name: sign.title,
+  about: sign.cancer_type,
+  url: new URL(`/warning-signs/${sign.slug}`, Astro.site ?? Astro.url.origin),
+  disclaimer: "Not medical advice. Always consult a licensed clinician.",
+};
+---
+
+<Layout
+  title={sign.title}
+  description={sign.description.replace(/<[^>]+>/g, "").slice(0, 155)}
+  image={imgSrc(sign.heroImage, 1200, 630) || undefined}
+  jsonLd={jsonLd}
+  canonicalPath={`/warning-signs/${sign.slug}`}
+>
+  <article class="mx-auto max-w-3xl px-5 py-14 sm:px-8 sm:py-20">
+    <a href="/paths/worried" class="text-sm font-semibold text-terracotta hover:underline">&larr; Back to warning signs</a>
+
+    <p class="mt-4 font-data text-xs uppercase tracking-wide text-terracotta">{sign.cancer_type} cancer</p>
+    <h1 class="mt-2 font-display text-3xl font-semibold leading-tight text-navy sm:text-4xl">
+      {sign.sign_name}
+    </h1>
+
+    <div class="mt-8">
+      <Media src={sign.heroImage} alt={sign.sign_name} ratio="16/9" tone="terracotta" loading="eager" fetchpriority="high" />
+    </div>
+
+    <RichHtml html={sign.description} class="mt-8 text-lg text-navy/85" />
+
+    <div class="mt-4 rounded-[12px] border border-navy/10 bg-white p-4 text-xs leading-relaxed text-navy/60">
+      This is educational information, not a diagnosis. Always talk to a licensed clinician about your
+      specific symptoms.
+    </div>
+
+    <section class="mt-10">
+      <h2 class="font-display text-xl font-semibold text-navy">What it could mean</h2>
+      <RichHtml html={sign.what_it_could_mean} class="mt-3 text-navy/80" />
+    </section>
+
+    <section class="mt-8">
+      <h2 class="font-display text-xl font-semibold text-navy">What it's probably is (to be fair)</h2>
+      <RichHtml html={sign.what_it_probably_is} class="mt-3 text-navy/80" />
+    </section>
+
+    <section class="mt-8 rounded-[12px] bg-rose p-6">
+      <h2 class="font-display text-xl font-semibold text-navy">Why this gets dismissed</h2>
+      <RichHtml html={sign.commonly_dismissed_note} class="mt-3 text-navy/80" />
+    </section>
+
+    <section class="mt-8">
+      <h2 class="font-display text-xl font-semibold text-navy">When to call your doctor</h2>
+      <RichHtml html={sign.when_to_call_doctor} class="mt-3 text-navy/80" />
+    </section>
+
+    <section class="mt-8 rounded-[12px] border-2 border-terracotta/30 bg-white p-6">
+      <h2 class="font-display text-xl font-semibold text-terracotta-dark">When to go to the ER</h2>
+      <RichHtml html={sign.when_to_go_to_er} class="mt-3 text-navy/80" />
+    </section>
+
+    <section class="mt-8">
+      <h2 class="font-display text-xl font-semibold text-navy">If you're dismissed</h2>
+      <RichHtml html={sign.if_dismissed} class="mt-3 text-navy/80" />
+    </section>
+
+    <section class="mt-8">
+      <h2 class="font-display text-xl font-semibold text-navy">If it runs in your family</h2>
+      <RichHtml html={sign.family_history_note} class="mt-3 text-navy/80" />
+    </section>
+  </article>
+
+  {
+    related.length > 0 && (
+      <section class="border-t border-navy/10 bg-white py-14 sm:py-20">
+        <div class="mx-auto max-w-6xl px-5 sm:px-8">
+          <h2 class="font-display text-2xl font-semibold text-navy">More {sign.cancer_type.toLowerCase()} warning signs</h2>
+          <div class="mt-8 grid gap-5 sm:grid-cols-3">
+            {related.map((s) => (
+              <WarningSignCard sign={s} />
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+</Layout>

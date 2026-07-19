@@ -1,0 +1,25 @@
+---
+import Media from "./Media.astro";
+import type { AccessGuide } from "../lib/content";
+
+interface Props {
+  guide: AccessGuide;
+}
+const { guide } = Astro.props;
+---
+
+<a
+  href={`/access-guides/${guide.slug}`}
+  class="group block overflow-hidden rounded-[12px] bg-white shadow-[var(--shadow-card)] transition-shadow hover:shadow-[var(--shadow-card-hover)]"
+>
+  <Media src={guide.heroImage} alt={guide.title} ratio="4/3" tone="sage" />
+  <div class="p-5">
+    <span class="font-data text-xs uppercase tracking-wide text-sage-dark">{guide.cancer_type}</span>
+    <h3 class="mt-1.5 font-display text-lg font-semibold leading-snug text-navy group-hover:text-terracotta">
+      {guide.title}
+    </h3>
+    <p class="mt-2 text-sm leading-relaxed text-navy/70 line-clamp-2">
+      {guide.topic}
+    </p>
+  </div>
+</a>

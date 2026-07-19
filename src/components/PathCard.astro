@@ -1,0 +1,36 @@
+---
+interface Props {
+  href: string;
+  title: string;
+  description: string;
+  icon: "worried" | "plan" | "checkin";
+}
+const { href, title, description, icon } = Astro.props;
+
+const icons: Record<Props["icon"], string> = {
+  worried:
+    '<path d="M12 9v4m0 4h.01M10.3 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.7 3.86a2 2 0 0 0-3.4 0Z" />',
+  plan: '<rect x="3" y="4" width="18" height="18" rx="2" /><path d="M16 2v4M8 2v4M3 10h18M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01" />',
+  checkin: '<circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 3" />',
+};
+---
+
+<a
+  href={href}
+  class="group flex flex-col rounded-[12px] bg-white p-6 shadow-[var(--shadow-card)] transition-all hover:-translate-y-1 hover:shadow-[var(--shadow-card-hover)] sm:p-7"
+>
+  <span
+    class="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-full bg-rose text-terracotta"
+    aria-hidden="true"
+  >
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" set:html={icons[icon]} />
+  </span>
+  <h3 class="font-display text-xl font-semibold text-navy">{title}</h3>
+  <p class="mt-2 flex-1 text-sm leading-relaxed text-navy/70">{description}</p>
+  <span class="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-terracotta group-hover:gap-2 transition-[gap]">
+    Start here
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+      <path d="M5 12h14M13 6l6 6-6 6" />
+    </svg>
+  </span>
+</a>

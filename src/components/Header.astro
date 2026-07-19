@@ -1,0 +1,69 @@
+---
+const currentPath = Astro.url.pathname;
+
+const navLinks = [
+  { href: "/paths/worried", label: "Worried about symptoms" },
+  { href: "/paths/plan", label: "Screening plan" },
+  { href: "/paths/checkin", label: "Just checking in" },
+  { href: "/library", label: "Library" },
+];
+
+function isActive(href: string) {
+  return currentPath === href || currentPath.startsWith(href + "/");
+}
+---
+
+<header class="border-b border-navy/10 bg-cream/95 backdrop-blur-sm sticky top-0 z-40">
+  <div class="mx-auto flex max-w-6xl items-center justify-between px-5 py-4 sm:px-8">
+    <a href="/" class="font-display text-lg font-semibold tracking-tight text-navy sm:text-xl">
+      Beyond Diagnosis
+    </a>
+
+    <nav aria-label="Primary" class="hidden items-center gap-6 md:flex">
+      {
+        navLinks.map((link) => (
+          <a
+            href={link.href}
+            class:list={[
+              "text-sm font-medium transition-colors hover:text-terracotta",
+              isActive(link.href) ? "text-terracotta" : "text-navy/80",
+            ]}
+          >
+            {link.label}
+          </a>
+        ))
+      }
+    </nav>
+
+    <a
+      href="/newsletter"
+      class="hidden rounded-full bg-navy px-4 py-2 text-sm font-semibold text-cream transition-colors hover:bg-terracotta sm:inline-block"
+    >
+      Get the newsletter
+    </a>
+
+    <details class="md:hidden">
+      <summary
+        class="list-none rounded-md border border-navy/20 px-3 py-1.5 text-sm font-medium text-navy [&::-webkit-details-marker]:hidden"
+        aria-label="Open menu"
+      >
+        Menu
+      </summary>
+      <nav
+        aria-label="Primary mobile"
+        class="absolute left-0 right-0 flex flex-col gap-1 border-b border-navy/10 bg-cream px-5 py-4 shadow-lg"
+      >
+        {
+          navLinks.map((link) => (
+            <a href={link.href} class="rounded-md px-2 py-2 text-sm font-medium text-navy hover:bg-rose">
+              {link.label}
+            </a>
+          ))
+        }
+        <a href="/newsletter" class="rounded-md px-2 py-2 text-sm font-semibold text-terracotta hover:bg-rose">
+          Get the newsletter
+        </a>
+      </nav>
+    </details>
+  </div>
+</header>

@@ -1,0 +1,23 @@
+---
+const year = new Date().getFullYear();
+---
+
+<footer class="border-t border-navy/10 bg-white">
+  <div class="mx-auto max-w-6xl px-5 py-10 sm:px-8">
+    <div class="grid gap-8 sm:grid-cols-[2fr_1fr]">
+      <div class="max-w-md">
+        <p class="font-display text-lg font-semibold text-navy">Beyond Diagnosis</p>
+        <p class="mt-3 text-sm leading-relaxed text-navy/70">
+          Beyond Diagnosis is an independent editorial project. Not medical advice. Always
+          consult a licensed clinician.
+        </p>
+      </div>
+      <nav aria-label="Footer" class="flex flex-col gap-2 text-sm sm:items-end">
+        <a href="/about" class="text-navy/80 hover:text-terracotta">About</a>
+        <a href="/privacy" class="text-navy/80 hover:text-terracotta">Privacy</a>
+        <a href="/newsletter" class="text-navy/80 hover:text-terracotta">Newsletter</a>
+      </nav>
+    </div>
+    <p class="mt-8 font-data text-xs text-navy/50">&copy; {year} Beyond Diagnosis.</p>
+  </div>
+</footer>

@@ -1,0 +1,49 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import ArticleCard from "../../components/ArticleCard.astro";
+import Reveal from "../../components/Reveal.astro";
+import { getArticles } from "../../lib/content";
+import { buildConfig, fadeUpGroup } from "../../lib/motion";
+
+const articles = await getArticles();
+const keys = articles.map((_, i) => `library-article-${i}`);
+const motion = buildConfig(fadeUpGroup(keys));
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  name: "The Library — Beyond Diagnosis",
+  url: new URL("/library", Astro.site ?? Astro.url.origin),
+};
+---
+
+<Layout
+  title="The Library"
+  description="Every article from Beyond Diagnosis — direct, evidence-grounded cancer education for people 35 and up."
+  motion={motion}
+  jsonLd={jsonLd}
+>
+  <section class="bg-white py-14 sm:py-20">
+    <div class="mx-auto max-w-6xl px-5 sm:px-8">
+      <p class="font-data text-xs uppercase tracking-wide text-sage-dark">The library</p>
+      <h1 class="mt-2 font-display text-3xl font-semibold text-navy sm:text-4xl">Every article, in one place.</h1>
+      <p class="mt-3 max-w-xl text-navy/70">
+        Advocacy, practical tools, and the stories that make the abstract concrete.
+      </p>
+
+      {
+        articles.length === 0 ? (
+          <p class="mt-10 text-navy/60">New articles are on the way — check back soon.</p>
+        ) : (
+          <div class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {articles.map((article, i) => (
+              <Reveal interactKey={keys[i]}>
+                <ArticleCard article={article} />
+              </Reveal>
+            ))}
+          </div>
+        )
+      }
+    </div>
+  </section>
+</Layout>
