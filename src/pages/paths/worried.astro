@@ -63,14 +63,15 @@ const jsonLd = {
         }
       </div>
 
+      <h2 class="sr-only">Warning signs{activeType ? ` — ${activeType}` : ""}</h2>
       {
         signs.length === 0 ? (
-          <p class="mt-10 text-navy/60">No warning signs match that filter yet — check back soon as we expand the library.</p>
+          <p class="mt-10 text-navy/70">No warning signs match that filter yet — check back soon as we expand the library.</p>
         ) : (
           <div class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {signs.map((sign, i) => (
               <Reveal interactKey={keys[i]}>
-                <WarningSignCard sign={sign} />
+                <WarningSignCard sign={sign} eager={i === 0} />
               </Reveal>
             ))}
           </div>

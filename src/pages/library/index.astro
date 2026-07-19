@@ -31,14 +31,15 @@ const jsonLd = {
         Advocacy, practical tools, and the stories that make the abstract concrete.
       </p>
 
+      <h2 class="sr-only">All articles</h2>
       {
         articles.length === 0 ? (
-          <p class="mt-10 text-navy/60">New articles are on the way — check back soon.</p>
+          <p class="mt-10 text-navy/70">New articles are on the way — check back soon.</p>
         ) : (
           <div class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {articles.map((article, i) => (
               <Reveal interactKey={keys[i]}>
-                <ArticleCard article={article} />
+                <ArticleCard article={article} eager={i === 0} />
               </Reveal>
             ))}
           </div>

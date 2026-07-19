@@ -39,10 +39,10 @@ const jsonLd = {
     <h1 class="mt-2 font-display text-3xl font-semibold leading-tight text-navy sm:text-4xl">
       {guide.title}
     </h1>
-    {guide.last_reviewed && <p class="mt-2 text-xs text-navy/50">Last reviewed {formatDate(guide.last_reviewed)}</p>}
+    {guide.last_reviewed && <p class="mt-2 text-xs text-navy/70">Last reviewed {formatDate(guide.last_reviewed)}</p>}
 
     <div class="mt-8">
-      <Media src={guide.heroImage} alt={guide.title} ratio="16/9" tone="sage" loading="eager" fetchpriority="high" />
+      <Media src={guide.heroImage} alt={guide.title} ratio="16/9" tone="sage" loading="eager" fetchpriority="high" width={1000} height={563} />
     </div>
 
     <RichHtml html={guide.overview} class="mt-8 text-lg text-navy/85" />
@@ -58,7 +58,7 @@ const jsonLd = {
         <RichHtml html={guide.when_applies} class="mt-2 text-sm text-navy/75" />
       </div>
       <div class="rounded-[12px] bg-white p-5 shadow-[var(--shadow-card)]">
-        <h3 class="font-display text-base font-semibold text-navy/60">This doesn't apply when</h3>
+        <h3 class="font-display text-base font-semibold text-navy/70">This doesn't apply when</h3>
         <RichHtml html={guide.when_not} class="mt-2 text-sm text-navy/75" />
       </div>
     </div>

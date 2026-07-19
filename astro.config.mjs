@@ -10,6 +10,7 @@ const isBuild = process.env.NODE_ENV == "production";
 
 // https://astro.build/config
 export default defineConfig({
+  site: "https://h6s-712e2e2f964157-ninahf9.wix-site-host.com",
   integrations: [wix(), wixPages(), react()],
   security: { checkOrigin: false },
   ...(isBuild && { adapter: cloudProviderFetchAdapter({}) }),

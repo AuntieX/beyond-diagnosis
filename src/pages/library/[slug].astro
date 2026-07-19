@@ -45,14 +45,14 @@ const jsonLd = {
     <h1 class="mt-2 font-display text-3xl font-semibold leading-tight text-navy sm:text-4xl">
       {article.title}
     </h1>
-    <div class="mt-4 flex items-center gap-2 text-sm text-navy/60">
+    <div class="mt-4 flex items-center gap-2 text-sm text-navy/70">
       <span>By {article.author}</span>
       <span aria-hidden="true">&middot;</span>
       <span>{formatDate(article.publishDate)}</span>
     </div>
 
     <div class="mt-8">
-      <Media src={article.heroImage} alt={article.title} ratio="16/9" tone="rose" loading="eager" fetchpriority="high" />
+      <Media src={article.heroImage} alt={article.title} ratio="16/9" tone="rose" loading="eager" fetchpriority="high" width={1000} height={563} />
     </div>
 
     <RichHtml html={article.body} class="mt-10 text-navy/85" />

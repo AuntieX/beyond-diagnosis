@@ -62,14 +62,15 @@ const jsonLd = {
         }
       </div>
 
+      <h2 class="sr-only">Access guides{activeType ? ` — ${activeType}` : ""}</h2>
       {
         guides.length === 0 ? (
-          <p class="mt-10 text-navy/60">No access guides match that filter yet — check back soon as we expand the library.</p>
+          <p class="mt-10 text-navy/70">No access guides match that filter yet — check back soon as we expand the library.</p>
         ) : (
           <div class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {guides.map((guide, i) => (
               <Reveal interactKey={keys[i]}>
-                <AccessGuideCard guide={guide} />
+                <AccessGuideCard guide={guide} eager={i === 0} />
               </Reveal>
             ))}
           </div>
