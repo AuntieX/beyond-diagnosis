@@ -41,6 +41,15 @@ const isOnAPath = PATHS.some((p) => isActive(p.href));
         </div>
       </details>
       <a
+        href="/my-plan"
+        class:list={[
+          "text-sm font-semibold transition-colors hover:text-terracotta",
+          isActive("/my-plan") ? "text-terracotta" : "text-navy",
+        ]}
+      >
+        The Map
+      </a>
+      <a
         href="/library"
         class:list={[
           "text-sm font-medium transition-colors hover:text-terracotta",
@@ -78,7 +87,10 @@ const isOnAPath = PATHS.some((p) => isActive(p.href));
             </a>
           ))
         }
-        <a href="/library" class="mt-2 rounded-md px-2 py-2 text-sm font-medium text-navy hover:bg-rose">
+        <a href="/my-plan" class="mt-2 rounded-md px-2 py-2 text-sm font-semibold text-terracotta hover:bg-rose">
+          The Map
+        </a>
+        <a href="/library" class="rounded-md px-2 py-2 text-sm font-medium text-navy hover:bg-rose">
           Library
         </a>
         <a href="/newsletter" class="rounded-md px-2 py-2 text-sm font-semibold text-terracotta hover:bg-rose">

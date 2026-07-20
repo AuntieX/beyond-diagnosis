@@ -27,6 +27,7 @@ const motion = buildConfig([
   fadeUpReveal("home-hero-heading", 0),
   fadeUpReveal("home-hero-subhead", 100),
   fadeUpReveal("home-hero-ctas", 180),
+  fadeUpReveal("map-teaser", 0),
   ...fadeUpGroup(cardKeys),
   ...fadeUpGroup(statKeys),
   ...fadeUpGroup(articleKeys),
@@ -65,7 +66,7 @@ const jsonLd = {
         <interact-element data-interact-key="home-hero-ctas" class="block">
           <div class="mt-8 flex flex-wrap gap-3">
             <a
-              href="/paths/plan"
+              href="/my-plan"
               class="rounded-full bg-terracotta px-6 py-3.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-terracotta-dark"
             >
               Get my screening schedule
@@ -92,6 +93,42 @@ const jsonLd = {
             width={900}
             height={675}
           />
+        </div>
+      </interact-element>
+    </div>
+  </section>
+
+  <section class="bg-navy py-14 sm:py-20">
+    <div class="mx-auto max-w-6xl px-5 sm:px-8">
+      <interact-element data-interact-key="map-teaser" class="block">
+        <div class="grid gap-8 rounded-[12px] bg-gradient-to-br from-terracotta/20 via-navy to-navy p-8 sm:grid-cols-[1.2fr_1fr] sm:items-center sm:p-12">
+          <div>
+            <p class="font-data text-xs uppercase tracking-wide text-rose">The Map</p>
+            <h2 class="mt-2 font-display text-2xl font-semibold text-cream sm:text-3xl">
+              Get your personalized plan in 60 seconds.
+            </h2>
+            <p class="mt-3 max-w-md text-cream/75">
+              A few quick questions about your age, history, and habits — and you'll get a screening timeline
+              built for you, not a generic checklist. Private by default; nothing is saved unless you ask.
+            </p>
+            <a
+              href="/my-plan"
+              class="mt-6 inline-flex items-center gap-2 rounded-full bg-terracotta px-6 py-3.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-terracotta-dark"
+            >
+              Start The Map
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M5 12h14M13 6l6 6-6 6" />
+              </svg>
+            </a>
+          </div>
+          <div class="hidden justify-self-end sm:block" aria-hidden="true">
+            <svg width="160" height="160" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" class="text-rose/70">
+              <circle cx="12" cy="12" r="9" stroke-width="0.8" />
+              <circle cx="12" cy="12" r="5.5" stroke-width="0.8" />
+              <circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none" />
+              <path d="M12 3v2.2M12 18.8V21M3 12h2.2M18.8 12H21" stroke-width="1.2" />
+            </svg>
+          </div>
         </div>
       </interact-element>
     </div>
