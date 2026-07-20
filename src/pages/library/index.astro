@@ -37,11 +37,15 @@ const jsonLd = {
           <p class="mt-10 text-navy/70">New articles are on the way — check back soon.</p>
         ) : (
           <div class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {articles.map((article, i) => (
-              <Reveal interactKey={keys[i]}>
-                <ArticleCard article={article} eager={i === 0} />
-              </Reveal>
-            ))}
+            {articles.map((article, i) =>
+              i === 0 ? (
+                <ArticleCard article={article} eager />
+              ) : (
+                <Reveal interactKey={keys[i]}>
+                  <ArticleCard article={article} />
+                </Reveal>
+              )
+            )}
           </div>
         )
       }

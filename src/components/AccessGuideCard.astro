@@ -22,7 +22,7 @@ const { guide, eager = false } = Astro.props;
     width={600}
     height={450}
     loading={eager ? "eager" : "lazy"}
-    fetchpriority={eager ? "high" : "auto"}
+    fetchpriority={eager ? "high" : "low"}
   />
   <div class="p-5">
     <span class="font-data text-xs uppercase tracking-wide text-sage-dark">{primaryCancerLabel(guide.cancer_type)}</span>

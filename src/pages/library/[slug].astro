@@ -4,6 +4,7 @@ import Media from "../../components/Media.astro";
 import RichHtml from "../../components/RichHtml.astro";
 import ArticleCard from "../../components/ArticleCard.astro";
 import { getArticle, getArticles, formatDate, imgSrc } from "../../lib/content";
+import { buildConfig, fadeUpReveal } from "../../lib/motion";
 
 export const prerender = false;
 
@@ -16,6 +17,10 @@ if (!article) {
 
 const allArticles = await getArticles();
 const related = allArticles.filter((a) => a._id !== article._id).slice(0, 3);
+// Note: the hero image is eager/high-priority for LCP — it deliberately has no
+// entrance animation, since @wix/interact's viewEnter FOUC-prevention hides the
+// element until JS runs, which pushes back Largest Contentful Paint.
+const motion = buildConfig([fadeUpReveal("article-body", 0)]);
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -34,6 +39,7 @@ const jsonLd = {
   description={article.excerpt}
   image={imgSrc(article.heroImage, 1200, 630) || undefined}
   jsonLd={jsonLd}
+  motion={motion}
   canonicalPath={`/library/${article.slug}`}
 >
   <article class="mx-auto max-w-3xl px-5 py-14 sm:px-8 sm:py-20">
@@ -55,7 +61,9 @@ const jsonLd = {
       <Media src={article.heroImage} alt={article.title} ratio="16/9" tone="rose" loading="eager" fetchpriority="high" width={1000} height={563} />
     </div>
 
-    <RichHtml html={article.body} class="mt-10 text-navy/85" />
+    <interact-element data-interact-key="article-body" class="block">
+      <RichHtml html={article.body} class="mt-10 text-navy/85" />
+    </interact-element>
   </article>
 
   {

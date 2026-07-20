@@ -1,9 +1,14 @@
 ---
+import { enhanceRichText } from "../lib/richtext";
+
 interface Props {
   html?: string;
   class?: string;
+  /** Set false for short/list-y fields where a pull-quote wouldn't make sense. */
+  pullQuote?: boolean;
 }
-const { html, class: className } = Astro.props;
+const { html, class: className, pullQuote = true } = Astro.props;
+const enhanced = html ? enhanceRichText(html, { pullQuote }) : "";
 ---
 
-{html && <div class:list={["prose-editorial", className]} set:html={html} />}
+{enhanced && <div class:list={["prose-editorial", className]} set:html={enhanced} />}

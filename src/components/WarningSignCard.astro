@@ -22,7 +22,7 @@ const { sign, eager = false } = Astro.props;
     width={600}
     height={450}
     loading={eager ? "eager" : "lazy"}
-    fetchpriority={eager ? "high" : "auto"}
+    fetchpriority={eager ? "high" : "low"}
   />
   <div class="p-5">
     <span class="font-data text-xs uppercase tracking-wide text-terracotta">{primaryCancerLabel(sign.cancer_type)}</span>

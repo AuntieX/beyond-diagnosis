@@ -31,21 +31,28 @@ const kickerColor = tone === "terracotta" ? "text-terracotta" : "text-sage-dark"
   </h1>
   {entry.cancer_tags && <p class="mt-2 text-sm text-navy/70">Applies to: {entry.cancer_tags}</p>}
 
+  {/* No entrance animation on the hero — it's eager/high-priority for LCP, and
+      @wix/interact's viewEnter FOUC-prevention would hide it until JS runs. */}
   <div class="mt-8">
     <Media src={entry.heroImage} alt={entry.title} ratio="16/9" tone={tone} loading="eager" fetchpriority="high" width={1000} height={563} />
   </div>
 
-  <p class="mt-8 text-lg text-navy/85">{entry.intro}</p>
+  <interact-element data-interact-key="lsd-intro" class="block">
+    <p class="mt-8 text-lg text-navy/85">{entry.intro}</p>
 
-  <div class="mt-4 rounded-[12px] border border-navy/10 bg-white p-4 text-xs leading-relaxed text-navy/70">
-    This is educational information, not medical advice. Always talk to your care team about what applies
-    to your specific situation.
-  </div>
+    <div class="mt-4 rounded-[12px] border border-navy/10 bg-white p-4 text-xs leading-relaxed text-navy/70">
+      This is educational information, not medical advice. Always talk to your care team about what applies
+      to your specific situation.
+    </div>
+  </interact-element>
 
   {/* The CMS body HTML only uses <h3> for its own section headers (no <h2>) — this
-      keeps h1 -> h2 -> h3 sequential for a11y without touching the rich text itself. */}
+      keeps h1 -> h2 -> h3 sequential for a11y without touching the rich text itself.
+      Kept outside the animated wrapper below so it's never opacity-hidden pre-trigger. */}
   <h2 class="sr-only">Full guide</h2>
-  <RichHtml html={entry.body} class="mt-10 text-navy/85" />
+  <interact-element data-interact-key="lsd-body" class="block">
+    <RichHtml html={entry.body} class="mt-10 text-navy/85" />
+  </interact-element>
 </article>
 
 {

@@ -21,7 +21,7 @@ const { article, eager = false } = Astro.props;
     width={640}
     height={360}
     loading={eager ? "eager" : "lazy"}
-    fetchpriority={eager ? "high" : "auto"}
+    fetchpriority={eager ? "high" : "low"}
   />
   <div class="p-5">
     <div class="flex items-center gap-2 font-data text-xs uppercase tracking-wide text-sage-dark">
