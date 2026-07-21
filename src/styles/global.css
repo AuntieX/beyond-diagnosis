@@ -252,3 +252,23 @@
     opacity: 0.35;
   }
 }
+
+/* Printable "bring this to your doctor" version of The Map's results (see
+   MapResults.tsx PrintButton/PrintOnlyHeader). Strips site chrome and any
+   in-flight entrance animation so the printout is just the plan itself. */
+@media print {
+  header,
+  footer {
+    display: none !important;
+  }
+
+  body {
+    background: #fff;
+  }
+
+  .map-step {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

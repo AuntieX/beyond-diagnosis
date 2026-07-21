@@ -27,7 +27,7 @@ const motion = buildConfig([
   fadeUpReveal("home-hero-heading", 0),
   fadeUpReveal("home-hero-subhead", 100),
   fadeUpReveal("home-hero-ctas", 180),
-  fadeUpReveal("map-teaser", 0),
+  fadeUpReveal("map-how-it-works", 0),
   ...fadeUpGroup(cardKeys),
   ...fadeUpGroup(statKeys),
   ...fadeUpGroup(articleKeys),
@@ -69,13 +69,13 @@ const jsonLd = {
               href="/my-plan"
               class="rounded-full bg-terracotta px-6 py-3.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-terracotta-dark"
             >
-              Get my screening schedule
+              Start The Map
             </a>
             <a
-              href="/paths/worried"
+              href="#paths"
               class="rounded-full border border-navy/20 bg-white px-6 py-3.5 text-sm font-semibold text-navy transition-colors hover:border-navy/40"
             >
-              Find warning signs
+              Explore the paths
             </a>
           </div>
         </interact-element>
@@ -98,22 +98,45 @@ const jsonLd = {
     </div>
   </section>
 
-  <section class="bg-navy py-14 sm:py-20">
+  <section class="bg-rose/25 py-14 sm:py-16">
     <div class="mx-auto max-w-6xl px-5 sm:px-8">
-      <interact-element data-interact-key="map-teaser" class="block">
-        <div class="grid gap-8 rounded-[12px] bg-gradient-to-br from-terracotta/20 via-navy to-navy p-8 sm:grid-cols-[1.2fr_1fr] sm:items-center sm:p-12">
-          <div>
-            <p class="font-data text-xs uppercase tracking-wide text-rose">The Map</p>
-            <h2 class="mt-2 font-display text-2xl font-semibold text-cream sm:text-3xl">
-              Get your personalized plan in 60 seconds.
-            </h2>
-            <p class="mt-3 max-w-md text-cream/75">
-              A few quick questions about your age, history, and habits — and you'll get a screening timeline
-              built for you, not a generic checklist. Private by default; nothing is saved unless you ask.
-            </p>
+      <interact-element data-interact-key="map-how-it-works" class="block">
+        <div>
+          <div class="text-center">
+            <p class="font-data text-xs uppercase tracking-wide text-terracotta">The Map</p>
+            <h2 class="mt-2 font-display text-2xl font-semibold text-navy sm:text-3xl">How it works</h2>
+          </div>
+          <div class="mx-auto mt-8 grid max-w-4xl gap-5 sm:grid-cols-3">
+            <div class="rounded-[12px] bg-white p-6 text-center shadow-[var(--shadow-card)]">
+              <span class="mx-auto flex h-9 w-9 items-center justify-center rounded-full bg-terracotta font-data text-sm font-semibold text-white">
+                1
+              </span>
+              <h3 class="mt-3 font-display text-lg font-semibold text-navy">Answer a few honest questions</h3>
+              <p class="mt-1.5 text-sm leading-relaxed text-navy/70">
+                Age, history, habits. About 60 seconds, no account needed.
+              </p>
+            </div>
+            <div class="rounded-[12px] bg-white p-6 text-center shadow-[var(--shadow-card)]">
+              <span class="mx-auto flex h-9 w-9 items-center justify-center rounded-full bg-terracotta font-data text-sm font-semibold text-white">
+                2
+              </span>
+              <h3 class="mt-3 font-display text-lg font-semibold text-navy">Get your personalized timeline</h3>
+              <p class="mt-1.5 text-sm leading-relaxed text-navy/70">
+                Screenings tailored to you — not a generic checklist.
+              </p>
+            </div>
+            <div class="rounded-[12px] bg-white p-6 text-center shadow-[var(--shadow-card)]">
+              <span class="mx-auto flex h-9 w-9 items-center justify-center rounded-full bg-terracotta font-data text-sm font-semibold text-white">
+                3
+              </span>
+              <h3 class="mt-3 font-display text-lg font-semibold text-navy">Bring it to your next appointment</h3>
+              <p class="mt-1.5 text-sm leading-relaxed text-navy/70">Print it, or send a copy to your inbox.</p>
+            </div>
+          </div>
+          <div class="mt-8 text-center">
             <a
               href="/my-plan"
-              class="mt-6 inline-flex items-center gap-2 rounded-full bg-terracotta px-6 py-3.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-terracotta-dark"
+              class="inline-flex items-center gap-2 rounded-full bg-terracotta px-6 py-3.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-terracotta-dark"
             >
               Start The Map
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
@@ -121,20 +144,12 @@ const jsonLd = {
               </svg>
             </a>
           </div>
-          <div class="hidden justify-self-end sm:block" aria-hidden="true">
-            <svg width="160" height="160" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" class="text-rose/70">
-              <circle cx="12" cy="12" r="9" stroke-width="0.8" />
-              <circle cx="12" cy="12" r="5.5" stroke-width="0.8" />
-              <circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none" />
-              <path d="M12 3v2.2M12 18.8V21M3 12h2.2M18.8 12H21" stroke-width="1.2" />
-            </svg>
-          </div>
         </div>
       </interact-element>
     </div>
   </section>
 
-  <section class="bg-white py-14 sm:py-20">
+  <section id="paths" class="scroll-mt-20 bg-white py-14 sm:py-20">
     <div class="mx-auto max-w-6xl px-5 sm:px-8">
       <div class="max-w-xl">
         <h2 class="font-display text-2xl font-semibold text-navy sm:text-3xl">Where do you want to start?</h2>

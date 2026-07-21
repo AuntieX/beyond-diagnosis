@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { MapAnswers, MapResult, ScreeningItem } from "../../lib/mapTypes";
 import { isEarlyAndLowRisk } from "../../lib/mapEngine";
 
@@ -38,6 +38,40 @@ function ScreeningRow({ item }: { item: ScreeningItem }) {
         </a>
       )}
     </div>
+  );
+}
+
+/** Shown only in the printed/saved version — hidden on screen. Gives the printout a
+ * branded letterhead even though the live page's header/nav is stripped for print. */
+function PrintOnlyHeader() {
+  const [date, setDate] = useState("");
+
+  useEffect(() => {
+    setDate(new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }));
+  }, []);
+
+  return (
+    <div className="hidden print:mb-6 print:block print:border-b print:border-navy/20 print:pb-4">
+      <p className="font-display text-lg font-semibold text-navy">Beyond Diagnosis — Your Map</p>
+      <p className="mt-1 text-xs text-navy/60">
+        {date ? `Printed ${date} — ` : ""}Not medical advice. Bring this to your doctor to start the conversation.
+      </p>
+    </div>
+  );
+}
+
+function PrintButton() {
+  return (
+    <button
+      type="button"
+      onClick={() => window.print()}
+      className="mt-6 inline-flex items-center gap-2 rounded-full border border-navy/20 bg-white px-5 py-2.5 text-sm font-semibold text-navy transition-colors hover:border-terracotta/50 hover:text-terracotta-dark print:hidden"
+    >
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+        <path d="M6 9V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v5M6 18H4a1 1 0 0 1-1-1v-5a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1h-2M6 14h12v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-7Z" />
+      </svg>
+      Print or save this — bring it to your doctor
+    </button>
   );
 }
 
@@ -119,16 +153,18 @@ export function MapResults({
 
   return (
     <div className="map-step">
-      <p className="font-data text-xs uppercase tracking-wide text-terracotta">
+      <PrintOnlyHeader />
+      <p className="font-data text-xs uppercase tracking-wide text-terracotta print:hidden">
         {variant === "quick" ? "Your Quick Map is ready" : "Your full Map"}
       </p>
-      <h1 className="mt-2 font-display text-3xl font-semibold text-navy sm:text-4xl">
+      <h1 className="mt-2 font-display text-3xl font-semibold text-navy sm:text-4xl print:mt-0 print:text-2xl">
         Here's what we'd tell a friend in your shoes.
       </h1>
       <p className="mt-3 max-w-2xl text-navy/70">
         Built from your age, {answers.sex ? "sex, " : ""}family history, and what you shared — nothing more, nothing
         stored.
       </p>
+      <PrintButton />
 
       <section className="mt-10">
         <h2 className="font-display text-xl font-semibold text-navy">Your screening timeline</h2>
@@ -197,19 +233,19 @@ export function MapResults({
         </div>
       </section>
 
-      <section className="mt-10 rounded-[12px] bg-navy p-6 text-cream sm:p-8">
-        <h2 className="font-display text-xl font-semibold text-rose">Your next moves</h2>
+      <section className="mt-10 rounded-[12px] bg-navy p-6 text-cream sm:p-8 print:border print:border-navy/20 print:bg-white print:p-0 print:text-navy print:shadow-none">
+        <h2 className="font-display text-xl font-semibold text-rose print:text-navy">Your next moves</h2>
         <div className="mt-4 flex flex-col gap-4">
           {result.nextMoves.map((m, i) => (
             <div key={m.id} className="flex gap-4">
-              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-cream/15 font-data text-xs font-semibold text-rose">
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-cream/15 font-data text-xs font-semibold text-rose print:border print:border-navy/30 print:bg-white print:text-navy">
                 {i + 1}
               </span>
               <div>
-                <p className="font-semibold text-cream">{m.title}</p>
-                <p className="mt-1 text-sm text-cream/75">{m.body}</p>
+                <p className="font-semibold text-cream print:text-navy">{m.title}</p>
+                <p className="mt-1 text-sm text-cream/75 print:text-navy/70">{m.body}</p>
                 {m.href && (
-                  <a href={m.href} className="mt-1.5 inline-block text-sm font-semibold text-rose hover:underline">
+                  <a href={m.href} className="mt-1.5 inline-block text-sm font-semibold text-rose hover:underline print:text-terracotta-dark">
                     {m.hrefLabel ?? "Go"} &rarr;
                   </a>
                 )}
@@ -220,7 +256,7 @@ export function MapResults({
       </section>
 
       {variant === "quick" && onGoDeeper && (
-        <section className="mt-10 rounded-[12px] border border-terracotta/30 bg-rose/40 p-6 text-center sm:p-8">
+        <section className="mt-10 rounded-[12px] border border-terracotta/30 bg-rose/40 p-6 text-center sm:p-8 print:hidden">
           <h2 className="font-display text-xl font-semibold text-navy">Want a fuller picture?</h2>
           <p className="mt-2 text-navy/70">
             The more you share, the more personal your Map gets — lifestyle, exposures, and a few more factors that
@@ -236,7 +272,7 @@ export function MapResults({
         </section>
       )}
 
-      <section className="mt-10 rounded-[12px] bg-white p-6 shadow-[var(--shadow-card)] sm:p-8">
+      <section className="mt-10 rounded-[12px] bg-white p-6 shadow-[var(--shadow-card)] sm:p-8 print:hidden">
         <h2 className="font-display text-lg font-semibold text-navy">Want a copy?</h2>
         <p className="mt-1.5 text-sm text-navy/70">Send your Map to your inbox — plus one honest email a week after that. Totally optional.</p>
         <div className="mt-4">
@@ -244,12 +280,12 @@ export function MapResults({
         </div>
       </section>
 
-      <div className="mt-10 rounded-[12px] border border-navy/10 bg-cream p-5 text-xs leading-relaxed text-navy/60">
+      <div className="mt-10 rounded-[12px] border border-navy/10 bg-cream p-5 text-xs leading-relaxed text-navy/60 print:mt-6 print:bg-white print:p-0">
         The Map is a starting point, not medical advice. It's built on general screening guidelines — your doctor
         knows your full picture. Bring this with you and start the conversation.
       </div>
 
-      <div className="mt-6 text-center">
+      <div className="mt-6 text-center print:hidden">
         <button type="button" onClick={onRestart} className="text-sm font-medium text-navy/50 hover:text-navy/75">
           Start over
         </button>
