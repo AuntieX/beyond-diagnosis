@@ -180,6 +180,7 @@ const CANCER_SYNONYMS: Record<string, string> = {
   vulvar: "Cervical",
   ovarian: "Ovarian",
   pancreatic: "Pancreatic",
+  thyroid: "Thyroid",
 };
 
 function tokenize(raw: string): string[] {
