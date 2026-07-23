@@ -13,7 +13,7 @@ interface Props {
   fetchpriority?: "high" | "low" | "auto";
   width?: number;
   height?: number;
-  tone?: "sage" | "terracotta" | "rose";
+  tone?: "sage" | "terracotta" | "rose" | "navy";
 }
 
 const {
@@ -35,6 +35,7 @@ const toneClass = {
   sage: "from-sage/40 via-rose/60 to-cream",
   terracotta: "from-terracotta/35 via-rose/70 to-cream",
   rose: "from-rose to-cream",
+  navy: "from-navy/25 via-sage/20 to-cream",
 }[tone];
 ---
 

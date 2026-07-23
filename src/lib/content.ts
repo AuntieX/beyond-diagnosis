@@ -62,7 +62,7 @@ export interface LifeStageEntry {
   heroImage?: string;
 }
 
-export type LifeStageCollectionId = "Therapies" | "Trials" | "Environment" | "Recovery";
+export type LifeStageCollectionId = "Therapies" | "Trials" | "Environment" | "Recovery" | "Caregiver";
 
 /** Resolve a wix:image:// URI (or a plain https URL) to a real, sized image URL. */
 export function imgSrc(value: unknown, w = 1200, h = 800): string {

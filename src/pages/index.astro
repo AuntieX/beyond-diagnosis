@@ -5,6 +5,7 @@ import PathCard from "../components/PathCard.astro";
 import ArticleCard from "../components/ArticleCard.astro";
 import Reveal from "../components/Reveal.astro";
 import NewsletterForm from "../components/NewsletterForm.astro";
+import MapStarter from "../components/map/MapStarter";
 import { getArticles, getWarningSigns, getAccessGuides, distinctCancerTypes } from "../lib/content";
 import { buildConfig, fadeUpGroup, fadeUpReveal, heroParallax } from "../lib/motion";
 import { HOMEPAGE_HERO_URL } from "../lib/site-images";
@@ -27,6 +28,7 @@ const motion = buildConfig([
   fadeUpReveal("home-hero-heading", 0),
   fadeUpReveal("home-hero-subhead", 100),
   fadeUpReveal("home-hero-ctas", 180),
+  fadeUpReveal("map-starter-header", 0),
   fadeUpReveal("map-how-it-works", 0),
   ...fadeUpGroup(cardKeys),
   ...fadeUpGroup(statKeys),
@@ -95,6 +97,25 @@ const jsonLd = {
           />
         </div>
       </interact-element>
+    </div>
+  </section>
+
+  <section class="bg-navy py-14 text-cream sm:py-20">
+    <div class="mx-auto max-w-xl px-5 sm:px-8">
+      <interact-element data-interact-key="map-starter-header" class="block">
+        <div class="text-center">
+          <p class="font-data text-xs uppercase tracking-wide text-rose">The Map</p>
+          <h2 class="mt-2 font-display text-2xl font-semibold text-cream sm:text-3xl">
+            Let's start. How old are you?
+          </h2>
+          <p class="mt-2 text-sm text-cream/60">
+            Drag the slider — see what's usually on the radar at your age, right now, no sign-up.
+          </p>
+        </div>
+      </interact-element>
+      <div class="mt-8">
+        <MapStarter client:visible />
+      </div>
     </div>
   </section>
 

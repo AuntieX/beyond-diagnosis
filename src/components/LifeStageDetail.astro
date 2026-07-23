@@ -12,14 +12,14 @@ interface Props {
   basePath: string;
   backHref: string;
   backLabel: string;
-  tone?: "sage" | "terracotta" | "rose";
+  tone?: "sage" | "terracotta" | "rose" | "navy";
   related: LifeStageEntry[];
   relatedHeading: string;
 }
 
 const { entry, basePath, backHref, backLabel, tone = "sage", related, relatedHeading } = Astro.props;
 
-const kickerColor = tone === "terracotta" ? "text-terracotta" : "text-sage-dark";
+const kickerColor = tone === "terracotta" ? "text-terracotta" : tone === "navy" ? "text-navy" : "text-sage-dark";
 ---
 
 <article class="mx-auto max-w-3xl px-5 py-14 sm:px-8 sm:py-20">

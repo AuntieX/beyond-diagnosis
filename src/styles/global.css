@@ -251,6 +251,27 @@
     background: var(--color-sage);
     opacity: 0.35;
   }
+
+  /* Dark-background variant, used by the homepage Map starter (see
+     src/components/map/MapStarter.tsx). Sage-on-navy reads too muddy at low
+     opacity, so brighten the rail with the rose accent instead. */
+  .map-slider.map-slider-dark {
+    background: var(--color-rose);
+    opacity: 0.45;
+  }
+
+  .map-slider.map-slider-dark::-moz-range-track {
+    background: var(--color-rose);
+    opacity: 0.45;
+  }
+
+  .map-slider.map-slider-dark::-webkit-slider-thumb {
+    border-color: var(--color-cream);
+  }
+
+  .map-slider.map-slider-dark::-moz-range-thumb {
+    border: 3px solid var(--color-cream);
+  }
 }
 
 /* Printable "bring this to your doctor" version of The Map's results (see

@@ -7,7 +7,7 @@ import type { LifeStageEntry } from "../lib/content";
 interface Props {
   entry: LifeStageEntry;
   basePath: string;
-  tone?: "sage" | "terracotta" | "rose";
+  tone?: "sage" | "terracotta" | "rose" | "navy";
   eager?: boolean;
 }
 const { entry, basePath, tone = "sage", eager = false } = Astro.props;

@@ -2,7 +2,7 @@
 // parent brand; each path has its own named identity (kicker on its hub page,
 // label in nav) plus a plain-language descriptor so the purpose is never unclear.
 
-export type PathIcon = "worried" | "plan" | "checkin" | "treatment" | "risk" | "rebuilding";
+export type PathIcon = "worried" | "plan" | "checkin" | "treatment" | "risk" | "rebuilding" | "caregiver";
 
 export interface PathMeta {
   key: string;
@@ -56,6 +56,14 @@ export const PATHS: PathMeta[] = [
     tagline: "You're in it now.",
     plain: "I'm in treatment",
     icon: "treatment",
+  },
+  {
+    key: "caregiver",
+    href: "/paths/caregiver",
+    subbrand: "In Their Corner",
+    tagline: "You're in it too.",
+    plain: "Supporting someone? You're in it too.",
+    icon: "caregiver",
   },
   {
     key: "rebuilding",

@@ -8,7 +8,34 @@ import { MapResults } from "./MapResults";
 
 type Phase = "intro" | "quick" | "quickResult" | "deeper" | "fullResult";
 
-function Intro({ onStart }: { onStart: () => void }) {
+/**
+ * Picks up ?age= and ?sex= carried over from the homepage's live Map starter
+ * (see src/components/map/MapStarter.tsx) so a visitor who already dragged
+ * the age slider there doesn't have to re-answer it here. Anyone arriving
+ * without those params gets the exact same experience as before.
+ */
+function readCarriedState(): { patch: Partial<MapAnswers>; skipToIndex: number } {
+  if (typeof window === "undefined") return { patch: {}, skipToIndex: 0 };
+  const params = new URLSearchParams(window.location.search);
+  const patch: Partial<MapAnswers> = {};
+  let skipToIndex = 0;
+
+  const ageParam = Number(params.get("age"));
+  if (Number.isFinite(ageParam) && ageParam >= 18 && ageParam <= 80) {
+    patch.age = Math.round(ageParam);
+    skipToIndex = 1;
+  }
+
+  const sexParam = params.get("sex");
+  if (skipToIndex === 1 && (sexParam === "female" || sexParam === "male")) {
+    patch.sex = sexParam;
+    skipToIndex = 2;
+  }
+
+  return { patch, skipToIndex };
+}
+
+function Intro({ onStart, carriedAge }: { onStart: () => void; carriedAge?: number }) {
   return (
     <div className="map-step">
       <p className="font-data text-xs uppercase tracking-wide text-terracotta">The Map</p>
@@ -20,6 +47,11 @@ function Intro({ onStart }: { onStart: () => void }) {
         you, not a generic checklist. No judgment, no scolding, and no pressure to share anything you'd rather
         keep to yourself.
       </p>
+      {carriedAge && (
+        <p className="mt-4 max-w-xl text-sm font-medium text-terracotta">
+          Got it — {carriedAge} years old. That's already saved, so you'll pick up from the next question.
+        </p>
+      )}
       <div className="mt-6 flex items-start gap-3 rounded-[12px] border border-sage/30 bg-sage/10 p-4 text-sm text-navy/75">
         <svg className="mt-0.5 shrink-0" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
           <rect x="4" y="10" width="16" height="10" rx="2" />
@@ -39,9 +71,10 @@ function Intro({ onStart }: { onStart: () => void }) {
 }
 
 export default function MapQuiz() {
+  const [carried] = useState(readCarriedState);
   const [phase, setPhase] = useState<Phase>("intro");
-  const [answers, setAnswers] = useState<MapAnswers>(defaultMapAnswers());
-  const [quickIndex, setQuickIndex] = useState(0);
+  const [answers, setAnswers] = useState<MapAnswers>(() => ({ ...defaultMapAnswers(), ...carried.patch }));
+  const [quickIndex, setQuickIndex] = useState(carried.skipToIndex);
   const [deeperIndex, setDeeperIndex] = useState(0);
 
   const update = (patch: Partial<MapAnswers>) => setAnswers((prev) => ({ ...prev, ...patch }));
@@ -58,7 +91,7 @@ export default function MapQuiz() {
   }
 
   if (phase === "intro") {
-    return <Intro onStart={() => setPhase("quick")} />;
+    return <Intro onStart={() => setPhase("quick")} carriedAge={carried.skipToIndex > 0 ? answers.age : undefined} />;
   }
 
   if (phase === "quick") {
